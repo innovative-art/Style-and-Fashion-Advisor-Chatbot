@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Style And Fashion Advisor Chatbot</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background: url('https://i.pinimg.com/736x/c7/8d/bc/c78dbcb8a2ac6280777bc62d9f0f6cda.jpg') no-repeat center center fixed;
+      background-size: cover;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .chat-container {
+      background: rgba(10, 10, 10, 0.20); 
+      width: 60%;
+      height: 80%;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-header {
+      background-color: #eae9c6;
+      color: #cc7013;
+      text-align: center;
+      padding: 15px;
+      font-size: 1.5rem;
+      font-weight: bold;
+      border-radius: 10px 10px 0 0;
+    }
+
+    .chat-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.9);
+    }
+
+    .chat-message {
+      margin-bottom: 10px;
+      max-width: 70%;
+      padding: 10px;
+      border-radius: 10px;
+      word-wrap: break-word;
+    }
+
+    .user-message {
+      text-align: right;
+      background: rgba(255, 255, 255, 0.2); /* Semi-transparent background for user messages */
+      color: #e0c3a5;
+      margin-left: auto;
+    }
+
+    .bot-message {
+      text-align: left;
+      background: rgba(50, 50, 50, 0.5); /* Optional background for bot messages */
+      color: #ffffff;
+    }
+
+    .chat-footer {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      background: rgba(220, 220, 220, 0.9);
+      border-radius: 0 0 10px 10px;
+    }
+
+    .chat-footer input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+
+    .chat-footer button {
+      background-color: #cc7013;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-size: 1rem;
+      margin-left: 10px;
+      cursor: pointer;
+    }
+
+    .chat-footer button:hover {
+      background-color: #0b7f0b;
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <div class="chat-header">Style And Fashion Advisor Chatbot</div>
+    <div class="chat-body" id="chatBody"></div>
+    <div class="chat-footer">
+      <input type="text" id="userInput" placeholder="Type your message here...">
+      <button onclick="sendMessage()">Send &#x1F4AC;</button>
+    </div>
+  </div>
+
+  <script>
+    const chatBody = document.getElementById("chatBody");
+
+    function appendMessage(message, sender) {
+      const messageDiv = document.createElement("div");
+      messageDiv.classList.add("chat-message", sender === "user" ? "user-message" : "bot-message");
+      messageDiv.textContent = message;
+      chatBody.appendChild(messageDiv);
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    async function sendMessage() {
+      const userInput = document.getElementById("userInput");
+      const userMessage = userInput.value.trim();
+
+      if (userMessage === "") return;
+
+      appendMessage(userMessage, "user");
+      userInput.value = "";
+
+      try {
+        const response = await fetch("/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: userMessage }),
+        });
+        const data = await response.json();
+        appendMessage(data.reply, "bot");
+      } catch (error) {
+        appendMessage("Error: Unable to reach the server.", "bot");
+      }
+    }
+  </script>
+</body>
+</html>
